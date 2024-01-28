@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const RegisterAccountInputSchema = z.object({
+export const RegisterInputSchema = z.object({
 	email: z.string().email(),
 	password: z.string(),
 	confirmPassword: z.string(),
@@ -9,4 +9,4 @@ export const RegisterAccountInputSchema = z.object({
 	cpf: z.string(),
 });
 
-export type RegisterAccountInput = z.infer<typeof RegisterAccountInputSchema>;
+export type RegisterInput = z.infer<typeof RegisterInputSchema>;

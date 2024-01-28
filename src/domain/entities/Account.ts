@@ -1,4 +1,4 @@
-import { RegisterAccountInput } from "@/application/controller/dto/RegisterAccountInput";
+import { RegisterInput } from "@/application/controller/dto/RegisterInput";
 import { DomainBase } from "../Base";
 import { randomUUID } from "node:crypto";
 import { hashSync } from "bcrypt";
@@ -20,10 +20,7 @@ export class Account extends DomainBase {
 		super();
 	}
 
-	static create = (
-		input: RegisterAccountInput,
-		firebaseId: string
-	): Account => {
+	static create = (input: RegisterInput, firebaseId: string): Account => {
 		const id = randomUUID();
 		const createdAt = new Date().toISOString();
 		const passwordHash = hashSync(

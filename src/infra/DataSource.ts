@@ -5,10 +5,7 @@ import {
 	EntityTarget,
 	ObjectLiteral,
 } from "typeorm";
-import { OrderEntity } from "./repository/entity/Order.entity";
-import { OrderItemEntity } from "./repository/entity/OrderItem.entity";
-import { UserEntity } from "./repository/entity/Account.entity";
-import { ItemEntity } from "./repository/entity/Item.entity";
+import { AccountEntity } from "./repository/entity/Account.entity";
 import { GeneralLogger } from "./log/GeneralLogger";
 import { Logger } from "./log/Logger";
 import { join } from "path";
@@ -50,7 +47,7 @@ export class DataSourceConnection {
 			username: process.env.DS_USER || "",
 			password: process.env.DS_PASS || "",
 			database: process.env.DS_DATABASE || "",
-			entities: [OrderEntity, OrderItemEntity, UserEntity, ItemEntity],
+			entities: [join(__dirname, "repository", "entity", "*.entity.ts")],
 			// synchronize: process.env.NODE_ENV !== "prd",
 			// logging: process.env.NODE_ENV !== "prd",
 		};
@@ -60,7 +57,7 @@ export class DataSourceConnection {
 			database: ":memory:",
 			dropSchema: true,
 			synchronize: true,
-			entities: [UserEntity, OrderEntity, ItemEntity, OrderItemEntity],
+			entities: [AccountEntity],
 		};
 
 		if (Object.values(options).some((opt) => !opt)) return undefined;

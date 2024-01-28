@@ -1,7 +1,7 @@
-import { RegisterAccount } from "@/application/usecase/RegisterAccount";
+import { Register } from "@/application/usecase/Register";
 import { DependencyRegistry } from "@/infra/DependencyRegistry";
 import { beforeEach, describe, expect, test } from "vitest";
-import { MockRegisterAccountInput } from "../constants";
+import { MockRegisterInput } from "../constants";
 import {
 	DuplicatedEmailError,
 	MismatchedPasswordsError,
@@ -9,7 +9,7 @@ import {
 import { AccountRepository } from "@/application/repository/AccountRepository";
 import { AccountMemoryRepository } from "@/infra/repository/mock/AccountMemoryRepository";
 import { Account } from "@/domain/entities/Account";
-import { RegisterAccountOutput } from "@/application/usecase/interfaces/RegisterAccountPort";
+import { RegisterOutput } from "@/application/usecase/Register";
 import { FirebaseAuthRepository } from "@/application/repository/FirebaseAuthRepository";
 import { FirebaseAuthMemoryRepository } from "@/infra/repository/mock/FirebaseAuthMemoryRepository";
 
@@ -19,7 +19,7 @@ describe("[Use Case - Register Account]", () => {
 	let accountRepository: AccountRepository;
 	let firebaseAuthRepository: FirebaseAuthRepository;
 
-	let registerAccount: RegisterAccount;
+	let registerAccount: Register;
 
 	beforeEach(() => {
 		accountRepository = new AccountMemoryRepository();
@@ -28,11 +28,11 @@ describe("[Use Case - Register Account]", () => {
 		registry.push("accountRepository", accountRepository);
 		registry.push("firebaseAuthRepository", firebaseAuthRepository);
 
-		registerAccount = new RegisterAccount(registry);
+		registerAccount = new Register(registry);
 	});
 
 	test("should throw MismatchedPasswordsError when the fields password and confirmPassword don't match", () => {
-		const input = new MockRegisterAccountInput();
+		const input = new MockRegisterInput();
 		input.confirmPassword = "differentPassword";
 
 		const fn = () => registerAccount.execute(input);
@@ -42,10 +42,10 @@ describe("[Use Case - Register Account]", () => {
 
 	test("should return DuplicatedEmailError when try to register a new account with an already registered email", async () => {
 		await accountRepository.save(
-			Account.create(new MockRegisterAccountInput(), "firebaseid")
+			Account.create(new MockRegisterInput(), "firebaseid")
 		);
 
-		const input = new MockRegisterAccountInput();
+		const input = new MockRegisterInput();
 
 		const fn = () => registerAccount.execute(input);
 
@@ -53,10 +53,10 @@ describe("[Use Case - Register Account]", () => {
 	});
 
 	test("should register a new account successfully", async () => {
-		const input = new MockRegisterAccountInput();
+		const input = new MockRegisterInput();
 
 		const account = await registerAccount.execute(input);
-		
-		expect(account).toBeInstanceOf(RegisterAccountOutput);
+
+		expect(account).toBeInstanceOf(RegisterOutput);
 	});
 });

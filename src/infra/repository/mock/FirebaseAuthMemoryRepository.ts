@@ -25,4 +25,8 @@ export class FirebaseAuthMemoryRepository implements FirebaseAuthRepository {
 
 		return account.id;
 	}
+
+	async resetPassword(email: string): Promise<void> {
+		return;
+	}
 }

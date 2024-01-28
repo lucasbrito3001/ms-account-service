@@ -1,6 +1,6 @@
-import { RegisterAccountInput } from "@/application/controller/dto/RegisterAccountInput";
+import { RegisterInput } from "@/application/controller/dto/RegisterInput";
 
-export class MockRegisterAccountInput implements RegisterAccountInput {
+export class MockRegisterInput implements RegisterInput {
 	email = "john@doe.com";
 	password = "mockpassword";
 	confirmPassword = "mockpassword";

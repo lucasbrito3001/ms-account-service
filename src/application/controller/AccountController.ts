@@ -1,17 +1,14 @@
 import { DependencyRegistry } from "@/infra/DependencyRegistry";
 import { Logger } from "@/infra/log/Logger";
 import { NextFunction, Request, Response } from "express";
-import {
-	RegisterAccountInput,
-	RegisterAccountInputSchema,
-} from "./dto/RegisterAccountInput";
-import { RegisterAccount } from "../usecase/RegisterAccount";
+import { RegisterInput } from "./dto/RegisterInput";
+import { Register } from "../usecase/Register";
 import { ZodSchema } from "zod";
-import { InvalidRegisterAccountInputError } from "@/error/AccountError";
+import { InvalidRegisterInputError } from "@/error/AccountError";
 
 export class AccountController {
 	private readonly logger: Logger;
-	private readonly registerAccount: RegisterAccount;
+	private readonly registerAccount: Register;
 	private readonly registerAccountInputSchema: ZodSchema;
 
 	constructor(registry: DependencyRegistry) {
@@ -28,7 +25,7 @@ export class AccountController {
 		next: NextFunction
 	): Promise<any> => {
 		try {
-			const input: RegisterAccountInput = req.body;
+			const input: RegisterInput = req.body;
 
 			this.logger.logUseCase(
 				"RegisterAccount",
@@ -38,7 +35,7 @@ export class AccountController {
 			const schemaValidation = this.registerAccountInputSchema.safeParse(input);
 
 			if (!schemaValidation.success)
-				throw new InvalidRegisterAccountInputError(schemaValidation.error);
+				throw new InvalidRegisterInputError(schemaValidation.error);
 
 			const output = await this.registerAccount.execute(input);
 

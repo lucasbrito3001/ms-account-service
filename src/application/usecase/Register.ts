@@ -1,9 +1,5 @@
 import { DependencyRegistry } from "@/infra/DependencyRegistry";
-import {
-	RegisterAccountOutput,
-	RegisterAccountPort,
-} from "./interfaces/RegisterAccountPort";
-import { RegisterAccountInput } from "../controller/dto/RegisterAccountInput";
+import { RegisterInput } from "../controller/dto/RegisterInput";
 import {
 	DuplicatedEmailError,
 	MismatchedPasswordsError,
@@ -15,7 +11,15 @@ import {
 	FirebaseUserId,
 } from "../repository/FirebaseAuthRepository";
 
-export class RegisterAccount implements RegisterAccountPort {
+export interface RegisterPort {
+	execute(input: RegisterInput): Promise<RegisterOutput>;
+}
+
+export class RegisterOutput {
+	constructor(public accountId: string) {}
+}
+
+export class Register implements RegisterPort {
 	private readonly firebaseAuthRepository: FirebaseAuthRepository;
 	private readonly accountRepository: AccountRepository;
 
@@ -24,7 +28,7 @@ export class RegisterAccount implements RegisterAccountPort {
 		this.accountRepository = registry.inject("accountRepository");
 	}
 
-	async execute(input: RegisterAccountInput): Promise<RegisterAccountOutput> {
+	async execute(input: RegisterInput): Promise<RegisterOutput> {
 		if (input.password !== input.confirmPassword)
 			throw new MismatchedPasswordsError();
 
@@ -41,6 +45,6 @@ export class RegisterAccount implements RegisterAccountPort {
 
 		await this.accountRepository.save(account);
 
-		return new RegisterAccountOutput(account.id);
+		return new RegisterOutput(account.id);
 	}
 }

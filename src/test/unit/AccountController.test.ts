@@ -2,12 +2,12 @@ import { AccountController } from "@/application/controller/AccountController";
 import { DependencyRegistry } from "@/infra/DependencyRegistry";
 import { GeneralLogger } from "@/infra/log/GeneralLogger";
 import { describe, expect, test, vi } from "vitest";
-import { MockRegisterAccountInput } from "../constants";
+import { MockRegisterInput } from "../constants";
 import { Request, Response } from "express";
-import { RegisterAccountInputSchema } from "@/application/controller/dto/RegisterAccountInput";
-import { InvalidRegisterAccountInputError } from "@/error/AccountError";
+import { RegisterInputSchema } from "@/application/controller/dto/RegisterInput";
+import { InvalidRegisterInputError } from "@/error/AccountError";
 import { ZodError } from "zod";
-import { RegisterAccountOutput } from "@/application/usecase/interfaces/RegisterAccountPort";
+import { RegisterAccountOutput } from "@/application/usecase/RegisterAccount";
 
 describe("[Controller - Account]", () => {
 	const mockReq = {} as Request;
@@ -15,7 +15,7 @@ describe("[Controller - Account]", () => {
 		status: vi.fn().mockImplementation(() => ({ json: vi.fn() })),
 	} as any as Response;
 	const mockNext = vi.fn().mockImplementation((value) => value);
-	const registerAccountInputSchema = RegisterAccountInputSchema;
+	const registerAccountInputSchema = RegisterInputSchema;
 	const mockRegisterAccountOutput = new RegisterAccountOutput("0");
 
 	let registry = new DependencyRegistry()
@@ -26,20 +26,20 @@ describe("[Controller - Account]", () => {
 	let accountController = new AccountController(registry);
 
 	describe("[Method - Register]", async () => {
-		test("should throw InvalidRegisterAccountInputError when pass invalid req.body", async () => {
-			const input = new MockRegisterAccountInput();
+		test("should throw InvalidRegisterInputError when pass invalid req.body", async () => {
+			const input = new MockRegisterInput();
 			input.email = "";
 
 			const req = { body: input } as Request;
 
 			const result = await accountController.register(req, mockRes, mockNext);
 
-			expect(result).toBeInstanceOf(InvalidRegisterAccountInputError);
+			expect(result).toBeInstanceOf(InvalidRegisterInputError);
 			expect(result.cause).toBeInstanceOf(ZodError);
 		});
 
 		test("should register a new Account successfully", async () => {
-			const input = new MockRegisterAccountInput();
+			const input = new MockRegisterInput();
 
 			const req = { body: input } as Request;
 
