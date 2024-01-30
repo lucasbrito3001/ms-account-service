@@ -11,3 +11,23 @@ export class QueueConnectionError extends ErrorBase {
 		super("QUEUE_CONNECTION_ERROR", "Queue connection error", 500, cause);
 	}
 }
+
+export class MissingFirebaseAppConfigError extends ErrorBase {
+	constructor() {
+		super(
+			"MISSING_FIREBASE_APP_CONFIG",
+			"You need to set FIREBASE_APP_CONFIG env variable",
+			500
+		);
+	}
+}
+
+export class InvalidFirebaseAppConfigError extends ErrorBase {
+	constructor() {
+		super(
+			"INVALID_FIREBASE_APP_CONFIG",
+			"Invalid FIREBASE_APP_CONFIG env variable",
+			500
+		);
+	}
+}

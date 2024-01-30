@@ -13,7 +13,6 @@ export class ResetPassword implements ResetPasswordPort {
 	}
 
 	async execute(email: string): Promise<void> {
-		await this.AuthManager.resetPassword(email);
-		return;
+		await this.AuthManager.sendPasswordResetEmail(email);
 	}
 }
