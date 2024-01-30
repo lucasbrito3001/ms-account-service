@@ -46,3 +46,4 @@ export class FirebaseApp {
 		initializeApp(this.config);
 	}
 }
+
