@@ -1,19 +1,19 @@
 import { DependencyRegistry } from "@/infra/DependencyRegistry";
-import { FirebaseAuthRepository } from "../repository/FirebaseAuthRepository";
+import { AuthManager } from "../repository/AuthManager";
 
 export interface ResetPasswordPort {
 	execute(email: string): Promise<void>;
 }
 
 export class ResetPassword implements ResetPasswordPort {
-	private readonly firebaseAuthRepository: FirebaseAuthRepository;
+	private readonly AuthManager: AuthManager;
 
 	constructor(registry: DependencyRegistry) {
-		this.firebaseAuthRepository = registry.inject("firebaseAuthRepository");
+		this.AuthManager = registry.inject("AuthManager");
 	}
 
 	async execute(email: string): Promise<void> {
-		await this.firebaseAuthRepository.resetPassword(email);
+		await this.AuthManager.resetPassword(email);
 		return;
 	}
 }

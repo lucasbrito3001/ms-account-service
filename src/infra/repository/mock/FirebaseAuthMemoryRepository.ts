@@ -1,9 +1,9 @@
 import {
-	FirebaseAuthRepository,
+	AuthManager,
 	FirebaseUserId,
-} from "@/application/repository/FirebaseAuthRepository";
+} from "@/application/repository/AuthManager";
 
-export class FirebaseAuthMemoryRepository implements FirebaseAuthRepository {
+export class FirebaseAuthMemoryRepository implements AuthManager {
 	private firebaseAccounts: any[] = [];
 
 	async createUser(email: string, password: string): Promise<FirebaseUserId> {

@@ -1,4 +1,4 @@
-import { FirebaseAuthRepository } from "@/application/repository/FirebaseAuthRepository";
+import { AuthManager } from "@/application/repository/AuthManager";
 import {
 	ResetPassword,
 	ResetPasswordPort,
@@ -10,19 +10,19 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 describe("[Use Case - Reset Password]", () => {
 	let registry = new DependencyRegistry();
 
-	let firebaseAuthRepository: FirebaseAuthRepository;
+	let AuthManager: AuthManager;
 
 	let resetPassword: ResetPasswordPort;
 
 	beforeEach(() => {
-		firebaseAuthRepository = new FirebaseAuthMemoryRepository();
-		registry.push("firebaseAuthRepository", firebaseAuthRepository);
+		AuthManager = new FirebaseAuthMemoryRepository();
+		registry.push("AuthManager", AuthManager);
 
 		resetPassword = new ResetPassword(registry);
 	});
 
 	test("should return a message saying that the user will receive an email to reset the password", async () => {
-		const spyResetPassword = vi.spyOn(firebaseAuthRepository, "resetPassword");
+		const spyResetPassword = vi.spyOn(AuthManager, "resetPassword");
 		const email = "mock@mail.com";
 
 		const result = await resetPassword.execute(email);

@@ -7,9 +7,9 @@ import {
 import { AccountRepository } from "../repository/AccountRepository";
 import { Account } from "@/domain/entities/Account";
 import {
-	FirebaseAuthRepository,
+	AuthManager,
 	FirebaseUserId,
-} from "../repository/FirebaseAuthRepository";
+} from "../repository/AuthManager";
 
 export interface RegisterPort {
 	execute(input: RegisterInput): Promise<RegisterOutput>;
@@ -20,11 +20,11 @@ export class RegisterOutput {
 }
 
 export class Register implements RegisterPort {
-	private readonly firebaseAuthRepository: FirebaseAuthRepository;
+	private readonly AuthManager: AuthManager;
 	private readonly accountRepository: AccountRepository;
 
 	constructor(registry: DependencyRegistry) {
-		this.firebaseAuthRepository = registry.inject("firebaseAuthRepository");
+		this.AuthManager = registry.inject("AuthManager");
 		this.accountRepository = registry.inject("accountRepository");
 	}
 
@@ -39,7 +39,7 @@ export class Register implements RegisterPort {
 		if (isDuplicatedAccount) throw new DuplicatedEmailError();
 
 		const firebaseUserId: FirebaseUserId =
-			await this.firebaseAuthRepository.createUser(input.email, input.password);
+			await this.AuthManager.createUser(input.email, input.password);
 
 		const account = Account.create(input, firebaseUserId);
 

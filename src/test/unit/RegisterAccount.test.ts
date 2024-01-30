@@ -10,23 +10,23 @@ import { AccountRepository } from "@/application/repository/AccountRepository";
 import { AccountMemoryRepository } from "@/infra/repository/mock/AccountMemoryRepository";
 import { Account } from "@/domain/entities/Account";
 import { RegisterOutput } from "@/application/usecase/Register";
-import { FirebaseAuthRepository } from "@/application/repository/FirebaseAuthRepository";
+import { AuthManager } from "@/application/repository/AuthManager";
 import { FirebaseAuthMemoryRepository } from "@/infra/repository/mock/FirebaseAuthMemoryRepository";
 
 describe("[Use Case - Register Account]", () => {
 	let registry = new DependencyRegistry();
 
 	let accountRepository: AccountRepository;
-	let firebaseAuthRepository: FirebaseAuthRepository;
+	let AuthManager: AuthManager;
 
 	let registerAccount: Register;
 
 	beforeEach(() => {
 		accountRepository = new AccountMemoryRepository();
-		firebaseAuthRepository = new FirebaseAuthMemoryRepository();
+		AuthManager = new FirebaseAuthMemoryRepository();
 
 		registry.push("accountRepository", accountRepository);
-		registry.push("firebaseAuthRepository", firebaseAuthRepository);
+		registry.push("AuthManager", AuthManager);
 
 		registerAccount = new Register(registry);
 	});
