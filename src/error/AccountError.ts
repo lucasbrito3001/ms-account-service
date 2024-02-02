@@ -1,3 +1,4 @@
+import { HttpStatusCode } from "axios";
 import { ErrorBase } from "./ErrorBase";
 
 export class InvalidCPFError extends ErrorBase {
@@ -37,3 +38,20 @@ export class EmailNotFoundError extends ErrorBase {
 		super("EMAIL_NOT_FOUND", "Email not found in the database", 400);
 	}
 }
+
+export class InvalidResetPasswordInputError extends ErrorBase {
+	constructor(cause: any) {
+		super("INVALID_INPUT", "The input is invalid", 400, cause);
+	}
+}
+
+export class AuthManagerAndDatabaseInconsistencyError extends ErrorBase {
+	constructor() {
+		super(
+			"DATA_SOURCES_INCONSISTENCY",
+			"Internal server error, please, contact the administrator",
+			HttpStatusCode.InternalServerError
+		);
+	}
+}
+

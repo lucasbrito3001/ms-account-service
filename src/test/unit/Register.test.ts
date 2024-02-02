@@ -12,21 +12,27 @@ import { Account } from "@/domain/entities/Account";
 import { RegisterOutput } from "@/application/usecase/Register";
 import { AuthManager } from "@/application/repository/AuthManager";
 import { FirebaseAuthMemoryRepository } from "@/infra/repository/mock/FirebaseAuthMemoryRepository";
+import { Queue } from "@/infra/queue/Queue";
+import { MockQueue } from "@/infra/queue/mock/MockQueue";
 
 describe("[Use Case - Register Account]", () => {
 	let registry = new DependencyRegistry();
 
 	let accountRepository: AccountRepository;
-	let AuthManager: AuthManager;
+	let authManager: AuthManager;
+	let queue: Queue;
 
 	let registerAccount: Register;
 
 	beforeEach(() => {
 		accountRepository = new AccountMemoryRepository();
-		AuthManager = new FirebaseAuthMemoryRepository();
+		authManager = new FirebaseAuthMemoryRepository();
+		queue = new MockQueue();
 
-		registry.push("accountRepository", accountRepository);
-		registry.push("AuthManager", AuthManager);
+		registry
+			.push("accountRepository", accountRepository)
+			.push("authManager", authManager)
+			.push("queue", queue);
 
 		registerAccount = new Register(registry);
 	});

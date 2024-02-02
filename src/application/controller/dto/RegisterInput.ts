@@ -6,7 +6,13 @@ export const RegisterInputSchema = z.object({
 	confirmPassword: z.string(),
 	firstName: z.string(),
 	lastName: z.string(),
-	cpf: z.string(),
+	cpf: z
+		.string()
+		.transform((value) => value.replace(/[^\w]/g, ""))
+		.refine(
+			(value) => value.length === 11,
+			"The cpf format is invalid, check and try again"
+		),
 });
 
 export type RegisterInput = z.infer<typeof RegisterInputSchema>;

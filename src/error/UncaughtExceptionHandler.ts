@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { ErrorBase } from "./ErrorBase";
+import { ErrorBase, UnexpectedError } from "./ErrorBase";
 import { Logger } from "@/infra/log/Logger";
 
 export class UncaughtExceptionHandler {
@@ -12,12 +12,15 @@ export class UncaughtExceptionHandler {
 	}
 
 	handle = (error: any) => {
-		if (!(error instanceof ErrorBase)) throw error;
+		if (!(error instanceof ErrorBase)) {
+			this.logger.unexpectedError(error.name, error.message);
+			return this.response.status(500).json(new UnexpectedError());
+		}
 
 		this.logger.handledError(error.name, error.message);
 
 		const { httpCode, cause, ...errorBase } = error;
-		this.response.status(httpCode).json({
+		return this.response.status(httpCode).json({
 			...errorBase,
 			...(process.env.NODE_ENV !== "production" && { cause }),
 		});

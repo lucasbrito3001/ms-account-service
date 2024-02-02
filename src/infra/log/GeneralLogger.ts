@@ -7,6 +7,9 @@ export class GeneralLogger implements Logger {
 	handledError(errorCode: string, message: any): void {
 		console.log(`[HANDLED_ERROR - ${errorCode}] ${message}`);
 	}
+	unexpectedError(errorCode: string, message: any): void {
+		console.log(`[UNEXPECTED_ERROR - ${errorCode}] ${message}`);
+	}
 	logUseCase(useCase: string, message: any): void {
 		console.log(`[USECASE - ${useCase}] ${message}`);
 	}

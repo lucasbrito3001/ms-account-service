@@ -13,6 +13,17 @@ import {
 } from "@/error/InfraError";
 import { QueueSubscriber } from "./queue/subscriber/QueueSubscriber";
 import { DependencyRegistry } from "./DependencyRegistry";
+import { ZodSchemaValidator } from "./ZodSchemaValidator";
+import { RegisterInputSchema } from "@/application/controller/dto/RegisterInput";
+import { FirebaseAuth } from "./repository/FirebaseAuth";
+import { FirebaseApp } from "./FirebaseApp";
+import { Register } from "@/application/usecase/Register";
+import { AccountDatabaseRepository } from "./repository/AccountDatabaseRepository";
+import { AccountEntity } from "./repository/entity/Account.entity";
+import { ResetPasswordInputSchema } from "@/application/controller/dto/ResetPasswordInput";
+import { SignInInputSchema } from "@/application/controller/dto/SignInInput";
+import { ResetPassword } from "@/application/usecase/ResetPassword";
+import { SignIn } from "@/application/usecase/SignIn";
 
 export class WebServer {
 	private server: Server | undefined;
@@ -20,6 +31,7 @@ export class WebServer {
 
 	constructor(
 		private dataSourceConnection: DataSourceConnection,
+		private firebaseApp: FirebaseApp,
 		private queue: Queue,
 		private logger: Logger
 	) {}
@@ -33,6 +45,8 @@ export class WebServer {
 		} catch (error) {
 			throw new DatabaseConnectionError(error as any);
 		}
+
+		this.firebaseApp.initialize();
 
 		try {
 			await this.queue.connect();
@@ -48,7 +62,8 @@ export class WebServer {
 		// Exception handler middleware
 		this.app.use(
 			(err: Error, req: Request, res: Response, next: NextFunction): void => {
-				return new UncaughtExceptionHandler(res, this.logger).handle(err);
+				new UncaughtExceptionHandler(res, this.logger).handle(err);
+				return;
 			}
 		);
 
@@ -64,7 +79,34 @@ export class WebServer {
 	private async fillRegistry() {
 		const registry = new DependencyRegistry();
 
-		registry.push("queue", this.queue).push("logger", this.logger);
+		const firebaseAuth = new FirebaseAuth();
+		const accountRepository = new AccountDatabaseRepository(
+			this.dataSourceConnection.getRepository(AccountEntity)
+		);
+		const registerInputSchemaValidator = new ZodSchemaValidator(
+			RegisterInputSchema
+		);
+		const resetPasswordInputSchemaValidator = new ZodSchemaValidator(
+			ResetPasswordInputSchema
+		);
+		const signInInputSchemaValidator = new ZodSchemaValidator(
+			SignInInputSchema
+		);
+
+		registry
+			.push("queue", this.queue)
+			.push("logger", this.logger)
+			.push("registerInputSchemaValidator", registerInputSchemaValidator)
+			.push(
+				"resetPasswordInputSchemaValidator",
+				resetPasswordInputSchemaValidator
+			)
+			.push("signInInputSchemaValidator", signInInputSchemaValidator)
+			.push("authManager", firebaseAuth)
+			.push("accountRepository", accountRepository)
+			.push("register", new Register(registry))
+			.push("resetPassword", new ResetPassword(registry))
+			.push("signIn", new SignIn(registry));
 
 		return registry;
 	}

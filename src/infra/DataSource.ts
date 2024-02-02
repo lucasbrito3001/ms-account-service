@@ -48,7 +48,7 @@ export class DataSourceConnection {
 			password: process.env.DS_PASS || "",
 			database: process.env.DS_DATABASE || "",
 			entities: [join(__dirname, "repository", "entity", "*.entity.ts")],
-			// synchronize: process.env.NODE_ENV !== "prd",
+			synchronize: process.env.NODE_ENV !== "prd",
 			// logging: process.env.NODE_ENV !== "prd",
 		};
 

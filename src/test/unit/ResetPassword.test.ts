@@ -10,19 +10,19 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 describe("[Use Case - Reset Password]", () => {
 	let registry = new DependencyRegistry();
 
-	let AuthManager: AuthManager;
+	let authManager: AuthManager;
 
 	let resetPassword: ResetPasswordPort;
 
 	beforeEach(() => {
-		AuthManager = new FirebaseAuthMemoryRepository();
-		registry.push("AuthManager", AuthManager);
+		authManager = new FirebaseAuthMemoryRepository();
+		registry.push("authManager", authManager);
 
 		resetPassword = new ResetPassword(registry);
 	});
 
 	test("should return a message saying that the user will receive an email to reset the password", async () => {
-		const spyResetPassword = vi.spyOn(AuthManager, "resetPassword");
+		const spyResetPassword = vi.spyOn(authManager, "sendPasswordResetEmail");
 		const email = "mock@mail.com";
 
 		const result = await resetPassword.execute(email);

@@ -18,7 +18,7 @@ describe("[Domain - Account]", () => {
 	test("should create a new Account instance with hashPassword and id", () => {
 		const account = Account.create(new MockRegisterInput(), "firebaseid");
 
-		expect(account.passwordHash).toBeDefined();
 		expect(account.id).toBeDefined();
+		expect(account.createdAt).toBeDefined();
 	});
 });

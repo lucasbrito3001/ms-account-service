@@ -31,3 +31,9 @@ export class InvalidFirebaseAppConfigError extends ErrorBase {
 		);
 	}
 }
+
+export class MissingEnvVariableError extends ErrorBase {
+	constructor(variable: string) {
+		super("MISSING_ENV_VARIABLE", `Missing the env variable: ${variable}`, 500);
+	}
+}

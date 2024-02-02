@@ -5,4 +5,5 @@ export interface Logger {
 	logSubscriber(subcriberName: string): void;
 	error(message: any): void;
 	handledError(errorCode: string, message: any): void;
+	unexpectedError(errorCode: string, message: any): void;
 }

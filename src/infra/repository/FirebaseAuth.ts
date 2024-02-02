@@ -24,7 +24,7 @@ export class FirebaseAuth implements AuthManager {
 			email,
 			password
 		);
-
+		
 		return user.user.uid;
 	}
 
